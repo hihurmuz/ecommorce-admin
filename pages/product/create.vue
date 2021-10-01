@@ -80,7 +80,7 @@
             value-field="index"
             text-field="title"  
             v-model="mainCategory" 
-            :options="options" 
+            :options="categories" 
             class="mt-2" />
       </b-form-group>
 
@@ -94,7 +94,7 @@
             v-model="subCategory" 
             :options="getSubCategoryList" 
             class="mt-2" />
-         <b-button variant="dark" class="mt-5" block :disabled="!allValueValid" @click="createProduct">Create</b-button>  
+         <b-button variant="dark" class="mt-5" block :disabled="!allValueValid" @click="postProduct">Create</b-button>  
       </b-form-group>
       
     </b-form-group>
@@ -103,6 +103,7 @@
 </template>
 
 <script>
+ import { mapActions, mapState } from 'vuex';
 export default {
     data() {
         return {
@@ -115,14 +116,14 @@ export default {
             subCategory:null,
             summary:null,
             features: null,
-            options: [],
         }
     },
     mounted() {
       this.getAllCategoryData()
     },
     computed: {
-        subCategoryOptions: function(){
+        ...mapState(['categories']),
+        subCategoryOptions(){
             if(this.mainCategory === 'A'){
                 let sub = [
                     { value: null, text: 'Please select a sub category',disabled: true },
@@ -154,7 +155,7 @@ export default {
                 return sub
             }
         },
-        allValueValid: function(){
+        allValueValid(){
             if(
               this.title && 
               this.price && 
@@ -163,8 +164,9 @@ export default {
               this.features &&
               this.description && 
               this.photo && 
-              this.mainCategory && 
-              this.subCategory){
+              this.mainCategory !== null && 
+              this.subCategory !== null
+              ){
                 return true
             }else{
                 return false
@@ -172,40 +174,30 @@ export default {
         },
         getSubCategoryList() {
           if (this.mainCategory !== null) {
-            return this.options[this.mainCategory].subCategory
+            return this.categories[this.mainCategory].subCategory
           } else {
             return []
           }
         }
     },
     methods: {
-        async createProduct(){
-            let newProduct={
-                title:this.title,
-                price:this.price,
-                stockNumber:this.stockNumber,
-                summary: this.summary,
-                features: this.features,
-                description:this.description,
-                photo:this.photo,
-                mainCategory:this.mainCategory,
-                subCategory:this.subCategory,
-            };
-
-            let result = await this.$axios.$post("http://localhost:8080/api/product",newProduct);
-            
-            console.log(result);
-            
-        },
-        async getAllCategoryData() {
-          let result = await this.$axios.$get("http://localhost:8080/api/category");
-          
-          let tempArr = []
-          for (let i = 0; i < result.length; i++) {
-            tempArr.push({...result[i], index: i})
+      ...mapActions(['createProduct','getCategories']),
+        postProduct(){
+          let newProduct={
+              title:this.title,
+              price:this.price,
+              stockNumber:this.stockNumber,
+              summary: this.summary,
+              features: this.features,
+              description:this.description,
+              photo:this.photo,
+              mainCategory: this.categories[this.mainCategory].title,
+              subCategory:this.subCategory,
           }
-          this.options = tempArr
-          console.log(tempArr);
+          this.createProduct(newProduct)
+        },
+        getAllCategoryData() {
+          this.getCategories()
         }
     },
 }
