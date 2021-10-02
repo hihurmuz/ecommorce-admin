@@ -5,7 +5,7 @@
         value-field="index"
         text-field="title"  
         v-model="mainCategory" 
-        :options="mainCategoryList" 
+        :options="categories" 
         class="mt-2" />
       <b-tab title="Main Category">        
         <b-button variant="secondary" class="mt-5" @click="deleteCategory('main')" block>Delete</b-button>    
@@ -22,50 +22,37 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 export default {
-  data() {
-    return {
-      mainCategory: null,
-      mainCategoryList: [],
-      subCategory: null
-    }
-  },
-  mounted() {
-    this.getAllCategoryData()
-  },
-  methods: {
-    async getAllCategoryData() {
-      let result = await this.$axios.$get("http://localhost:8080/api/category");
-      
-      let tempArr = []
-      for (let i = 0; i < result.length; i++) {
-        tempArr.push({...result[i], index: i})
-      }
-      this.mainCategoryList = tempArr
+    data() {
+        return {
+            mainCategory: null,
+            subCategory: null
+        }
     },
-    async deleteCategory(type) {
-      let _id = this.mainCategoryList[this.mainCategory]._id
-      switch (type) {
-        case 'main':
-          await this.$axios.$delete(`http://localhost:8080/api/category/${_id}`);
-          break;
-          
-        case 'sub':
-          await this.$axios.$put(`http://localhost:8080/api/category/${_id}`, 
-          {subCategory: this.subCategory});
-          break;
-      }
+    created() {
+        this.getAllCategoryData()
+    },
+    methods: {
+        ...mapActions(['getCategories', 'deleteCategory']),
+        getAllCategoryData() {
+            this.getCategories()
+        },
+        deleteCategory(type) {
+            let _id = this.categories[this.mainCategory]._id
+            this.deleteCategory({ type, _id})
+        }
+    },
+    computed: {
+        ...mapState(['categories']),
+        getSubCategoryList() {
+            if (this.mainCategory !== null) {
+                return this.categories[this.mainCategory].subCategory
+            } else {
+                return []
+            }
+        }
     }
-  },
-  computed: {
-    getSubCategoryList() {
-      if (this.mainCategory !== null) {
-        return this.mainCategoryList[this.mainCategory].subCategory
-      } else {
-        return []
-      }
-    }
-  }
 }
 </script>
 

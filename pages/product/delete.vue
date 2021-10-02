@@ -15,7 +15,7 @@
                     label-for="nested-street"
                 >
                     <b-form-input v-model="productID" id="nested-street"></b-form-input>
-                    <b-button variant="dark" class="mt-5" block  @click="deleteProduct">Delete</b-button>  
+                    <b-button variant="dark" class="mt-5" block  @click="delProduct">Delete</b-button>  
                 </b-form-group>     
                 </b-form-group>
             </b-card>
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
     data() {
         return {
@@ -30,10 +32,9 @@ export default {
         }
     },
     methods: {
-         async deleteProduct(){
-            let result = await this.$axios.$delete(`http://localhost:8080/api/product/${this.productID}`);
-            
-            console.log(result);
+        ...mapActions(['deleteProduct']),
+        delProduct(){
+           this.deleteProduct(this.productID)
         },
     },
 }
