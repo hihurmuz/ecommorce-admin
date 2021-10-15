@@ -1,109 +1,29 @@
 <template>
-<div>
-  <b-card bg-variant="light">
-    <b-form-group
-      label-cols-lg="3"
-      label="Product Create"
-      label-size="lg"
-      label-class="font-weight-bold pt-0"
-      class="mb-0"
-    >
-      <b-form-group
-        label-cols-sm="3"
-        label="Title:"
-        label-align-sm="right"
-        label-for="nested-street"
-      >
-        <b-form-input v-model="title" id="nested-street"></b-form-input>
-      </b-form-group>
-
-      <b-form-group
-        label-cols-sm="3"
-        label="Price:"
-        label-align-sm="right"
-        label-for="price-input"
-      >
-        <b-form-input v-model="price" id="price-input"></b-form-input>
-      </b-form-group>
-
-      <b-form-group
-        label-cols-sm="3"
-        label="Stock Number:"
-        label-align-sm="right"
-        label-for="nested-state"
-      >
-        <b-form-input v-model="stockNumber" id="nested-state"></b-form-input>
-      </b-form-group>
-      
-      <b-form-group
-        label-cols-sm="3"
-        label="Summary:"
-        label-align-sm="right"
-        label-for="summary-input"
-      >
-        <b-form-input v-model="summary" id="summary-input"></b-form-input>
-      </b-form-group>
-      
-      <b-form-group
-        label-cols-sm="3"
-        label="Features:"
-        label-align-sm="right"
-        label-for="tags-features "
-      >
-        <b-form-tags input-id="tags-features" v-model="features" class="mb-2" placeholder="Add Features"></b-form-tags>
-      </b-form-group>
-      
-      <b-form-group
-        label-cols-sm="3"
-        label="Description:"
-        label-align-sm="right"
-        label-for="nested-country"
-      >
-        <b-form-tags input-id="tags-description" v-model="description" class="mb-2" placeholder="Add Decriciption"></b-form-tags>
-      </b-form-group>
-
-      <b-form-group
-        label-cols-sm="3"
-        label="Photo:"
-        label-align-sm="right" class="mb-0"
-      >
-        <b-form-tags input-id="tags-photo" v-model="photo" placeholder="Add Photo Link" class="mb-2"></b-form-tags>
-      </b-form-group>
-
-      <b-form-group
-            label-cols-sm="3"
-            label="Main Category:"
-            label-align-sm="right"
-            label-for="main-state"
-        >
-         <b-form-select 
-            value-field="index"
-            text-field="title"  
-            v-model="mainCategory" 
-            :options="categories" 
-            class="mt-2" />
-      </b-form-group>
-
-      <b-form-group
-            label-cols-sm="3"
-            label="Sub Category:"
-            label-align-sm="right"
-            label-for="sub-state"
-        >
-         <b-form-select             
-            v-model="subCategory" 
-            :options="getSubCategoryList" 
-            class="mt-2" />
-         <b-button variant="dark" class="mt-5" block :disabled="!allValueValid" @click="postProduct">Create</b-button>  
-      </b-form-group>
-      
-    </b-form-group>
-  </b-card>
-</div>
+    <b-card class="card-submit" bg-variant="light">
+        <b-row>
+            <b-col cols="12" md="4">
+                <h5>Product Create</h5>
+            </b-col>
+            <b-col cols="12" md="8">
+                <b-form-group>          
+                    <b-form-input class="mt-3 mb-3" v-model="title" placeholder="Title" /> 
+                    <b-form-input class="mt-3 mb-3" v-model="price" placeholder="Price" />
+                    <b-form-input class="mt-3 mb-3" v-model="stockNumber" placeholder="Stock Number" />
+                    <b-form-input class="mt-3 mb-3" v-model="summary" placeholder="Product Summary" />
+                    <b-form-tags class="mt-3 mb-3" v-model="features" placeholder="Add Features" />
+                    <b-form-tags class="mt-3 mb-3" v-model="description" placeholder="Add Decriciption" />
+                    <b-form-tags class="mt-3 mb-2" v-model="photo" placeholder="Add Photo Link" />
+                    <b-form-select  class="mt-2 mb-2" value-field="index" text-field="title" v-model="mainCategory" :options="categories" />
+                    <b-form-select class="mt-2 mb-2" v-model="subCategory" :options="subcategoryList(mainCategory)" />
+                    <b-button class="mt-2 mb-2" variant="dark" block :disabled="!allValueValid" @click="postProduct">Create</b-button>
+                </b-form-group>
+            </b-col>
+        </b-row>
+    </b-card>
 </template>
 
 <script>
- import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 export default {
     data() {
         return {
@@ -112,94 +32,53 @@ export default {
             stockNumber:null,
             description:null,
             photo:null,
-            mainCategory:null,
+            mainCategory: 0,
             subCategory:null,
             summary:null,
             features: null,
         }
     },
     mounted() {
-      this.getAllCategoryData()
+        this.subCategory = this.subcategoryList(0)[0] // TODO: check this
     },
     computed: {
         ...mapState(['categories']),
-        subCategoryOptions(){
-            if(this.mainCategory === 'A'){
-                let sub = [
-                    { value: null, text: 'Please select a sub category',disabled: true },
-                    { value: '1', text: '1' },
-                    { value: '2', text: '2' },
-                    { value: '3', text: '3' },
-                    ];
-                return sub
-            }else if(this.mainCategory === 'B'){
-                 let sub = [
-                    { value: null, text: 'Please select a sub category',disabled: true },
-                    { value: '4', text: '4' },
-                    { value: '5', text: '5' },
-                    { value: '6', text: '6' },
-                    ];
-                return sub
-            }else if(this.mainCategory === 'C'){
-                 let sub = [
-                    { value: null, text: 'Please select a sub category',disabled: true },
-                    { value: '7', text: '7' },
-                    { value: '8', text: '8' },
-                    { value: '9', text: '9' },
-                    ];
-                return sub
-            }else{
-                let sub = [
-                    { value: null, text: 'Please select a main category first ',disabled: true },                    
-                    ];
-                return sub
-            }
-        },
+        ...mapGetters(['subcategoryList']),
         allValueValid(){
             if(
-              this.title && 
-              this.price && 
-              this.stockNumber && 
-              this.summary &&
-              this.features &&
-              this.description && 
-              this.photo && 
-              this.mainCategory !== null && 
-              this.subCategory !== null
-              ){
+                this.title && 
+                this.price && 
+                this.stockNumber && 
+                this.summary &&
+                this.features &&
+                this.description && 
+                this.photo && 
+                this.mainCategory !== null && 
+                this.subCategory !== null
+            ){
                 return true
-            }else{
+            } else {
                 return false
             }
         },
-        getSubCategoryList() {
-          if (this.mainCategory !== null) {
-            return this.categories[this.mainCategory].subCategory
-          } else {
-            return []
-          }
-        }
     },
     methods: {
-      ...mapActions(['createProduct','getCategories']),
+        ...mapActions(['createProduct']),
         postProduct(){
-          let newProduct={
-              title:this.title,
-              price:this.price,
-              stockNumber:this.stockNumber,
-              summary: this.summary,
-              features: this.features,
-              description:this.description,
-              photo:this.photo,
-              mainCategory: this.categories[this.mainCategory].title,
-              subCategory:this.subCategory,
-          }
-          this.createProduct(newProduct)
-        },
-        getAllCategoryData() {
-          this.getCategories()
+            let newProduct={
+                title:this.title,
+                price:this.price,
+                stockNumber:this.stockNumber,
+                summary: this.summary,
+                features: this.features,
+                description:this.description,
+                photo:this.photo,
+                mainCategory: this.categories[this.mainCategory].title,
+                subCategory:this.subCategory,
+            }
+            this.createProduct(newProduct)
         }
-    },
+    }
 }
 </script>
 

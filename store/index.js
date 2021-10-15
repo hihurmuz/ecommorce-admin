@@ -3,10 +3,17 @@ const state = () => ({
     categories: null,
     product: null,
 })
+
+const getters = {
+    subcategoryList: (state) => (mainCategory) => {
+        if(mainCategory !== null && state.categories) {
+            return state.categories[mainCategory].subCategory
+        } else return []
+    },
+}
     
 const mutations = {
     SET_CATEGORIES( state, payload ) {
-        console.log(payload);
         state.categories = payload
     },
     SET_PRODUCT( state, payload ) {
@@ -99,6 +106,7 @@ const actions = {
 export default {
     namespaced: true,
     state,
+    getters,
     actions,
     mutations,
 }
