@@ -7,7 +7,7 @@ const state = () => ({
 const getters = {
     subcategoryList: (state) => (mainCategory) => {
         if(mainCategory !== null && state.categories) {
-            return state.categories[mainCategory].subCategory
+            return state.categories.find(el => el.title === mainCategory)?.subCategory
         } else return []
     },
 }
@@ -39,22 +39,46 @@ const actions = {
     
     createMainCategory(context, category) {
         return this.$axios.$post(`${context.state.serverUrl}/category`, category)
+            .then(res => {
+                console.log(res)
+            })
+            .catch((err) => {
+                console.error(err)
+            })
     },
     
     createSubCategory(context, payload){
         return this.$axios.$post(`${context.state.serverUrl}/category/${payload.mainCategoryID}`, 
         { subCategory: payload.subCategory })
+            .then(res => {
+                console.log(res)
+            })
+            .catch((err) => {
+                console.error(err)
+            })
     },
     
     deleteCategory(context, payload) {
         switch (payload.type) {
             case 'main':
-                this.$axios.$delete(`${context.state.serverUrl}/category/${payload._id}`);
+                return this.$axios.$delete(`${context.state.serverUrl}/category/${payload._id}`)
+                    .then(res => {
+                        console.log(res)
+                    })
+                    .catch((err) => {
+                        console.error(err)
+                    })
                 break;
                 
             case 'sub':
-                this.$axios.$put(`${context.state.serverUrl}/category/${payload._id}`, 
-                {subCategory: payload.subCategory});
+                return this.$axios.$put(`${context.state.serverUrl}/category/${payload._id}`, 
+                {subCategory: payload.subCategory})
+                    .then(res => {
+                        console.log(res)
+                    })
+                    .catch((err) => {
+                        console.error(err)
+                    })
                 break;
         }
     },
@@ -92,7 +116,7 @@ const actions = {
     },
     
     updateProduct(context, {productID, updatedProduct}) {
-        return this.$axios.$put(`${state.serverUrl}/product/${productID}`,updatedProduct)
+        return this.$axios.$put(`${context.state.serverUrl}/product/${productID}`,updatedProduct)
             .then(res => {
                 console.error(res)
             })

@@ -7,16 +7,16 @@
             <b-col cols="12" md="8">
                 <b-form-group>          
                     <b-form-select 
-                        value-field="index"
+                        value-field="title"
                         text-field="title"  
                         v-model="mainCategory" 
                         :options="categories" 
                         class="mt-2" />
                     <b-form-select             
                         v-model="subCategory" 
-                        :options="getSubCategoryList" 
+                        :options="subcategoryList(mainCategory)" 
                         class="mt-2" /> 
-                    <b-button variant="secondary" class="mt-5" @click="deleteCategory(tab)" block>Delete</b-button>             
+                    <b-button variant="secondary" class="mt-5" @click="deleteCategoryElement()" block>Delete</b-button>             
                 </b-form-group>
             </b-col>
         </b-row>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
 export default {
     data() {
         return {
@@ -33,22 +33,30 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['deleteCategory']),
-        deleteCategory() {
+        ...mapActions(['deleteCategory', 'getCategories']),
+        deleteCategoryElement() {
             let type = this.subCategory ? 'sub' : 'main'
-            let _id = this.categories[this.mainCategory]._id
-            this.deleteCategory({ type, _id})
+            var _id = this.categories.find(el => el.title === this.mainCategory)._id
+            
+            switch (this.subCategory) {
+                case null:
+                    this.deleteCategory({ type: 'main', _id })
+                        .then(() => {
+                            this.getCategories()
+                        })
+                    break;            
+                default:
+                    this.deleteCategory({  type: 'sub', _id, subCategory: this.subCategory })
+                        .then(() => {
+                            this.getCategories()
+                        })
+                    break;
+            }
         }
     },
     computed: {
         ...mapState(['categories']),
-        getSubCategoryList() {
-            if (this.mainCategory !== null) {
-                return this.categories[this.mainCategory].subCategory
-            } else {
-                return []
-            }
-        }
+        ...mapGetters(['subcategoryList']),
     }
 }
 </script>

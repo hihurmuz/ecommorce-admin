@@ -55,12 +55,20 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['createMainCategory', 'createSubCategory']),
+        ...mapActions(['createMainCategory', 'createSubCategory', 'getCategories']),
         createMainCategoryItem() {    
             this.createMainCategory({ title: this.catagoryName })
+                .then(() => {
+                    this.getCategories()
+                    console.log(this.categories);
+                })
         },
-        createSubCategoryItem() {            
+        createSubCategoryItem() {  
             this.createSubCategory({ mainCategoryID: this.categories[this.selectedMainCategory]._id, subCategory:this.subcatagoryName })
+                 .then(() => {
+                    this.getCategories()
+                    console.log(this.categories);
+                })
         },
     },
  computed: {
