@@ -19,16 +19,7 @@
                     <h5>Update Product Info</h5>
                 </b-col>
                 <b-col cols="12" md="8">
-                    <b-form-group>
-                        <b-form-input class="mt-3 mb-3" v-model="item.title" placeholder="Title" />
-                        <b-form-input class="mt-3 mb-3" v-model="item.price" placeholder="Price" />
-                        <b-form-input class="mt-3 mb-3" v-model="item.stockNumber" placeholder="Stock Number" />
-                        <b-form-tags class="mt-3 mb-3" v-model="item.description" placeholder="Add Decriciption" />
-                        <b-form-tags class="mt-3 mb-2" v-model="item.photo" placeholder="Add Photo Link" />
-                        <b-form-select  class="mt-2 mb-2" value-field="title" text-field="title" v-model="item.mainCategory" :options="categories" />
-                        <b-form-select class="mt-2 mb-2" v-model="item.subCategory" :options="subcategoryList(item.mainCategory)" />
-                        <b-button class="mt-2 mb-2" variant="dark" block :disabled="!allValueValid" @click="putProduct">Update</b-button>
-                    </b-form-group>
+                    <product-form type="Update" :itemValue="item" @sendProduct="putProduct($event)"/>
                 </b-col>
             </b-row>
         </b-card>
@@ -37,7 +28,11 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
+import ProductForm from '../../components/ProductForm.vue'
 export default {
+    components: {
+        ProductForm
+    },
     data() {
         return {
             productID:null,
@@ -55,30 +50,16 @@ export default {
     computed: {
         ...mapState(['product', 'categories']),
         ...mapGetters(['subcategoryList']),
-        allValueValid(){
-            if(
-                this.item.title && 
-                this.item.price && 
-                this.item.stockNumber && 
-                this.item.description && 
-                this.item.photo && 
-                this.item.mainCategory && 
-                this.item.subCategory){
-                return true
-            }else{
-                return false
-            }
-        }
     },
     methods: {
         ...mapActions(['getProduct', 'updateProduct']),
         getProductOne(){
             this.getProduct(this.productID)
         },
-        putProduct(){
+        putProduct(item){
             this.updateProduct({
                 productID: this.productID,
-                updatedProduct: this.item
+                updatedProduct: item
             })
         }
     },

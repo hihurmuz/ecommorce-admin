@@ -35,7 +35,6 @@ export default {
     methods: {
         ...mapActions(['deleteCategory', 'getCategories']),
         deleteCategoryElement() {
-            let type = this.subCategory ? 'sub' : 'main'
             var _id = this.categories.find(el => el.title === this.mainCategory)._id
             
             switch (this.subCategory) {
@@ -52,6 +51,9 @@ export default {
                         })
                     break;
             }
+            
+            this.mainCategory = null
+            this.subCategory = null
         }
     },
     computed: {

@@ -88,7 +88,7 @@ const actions = {
         return this.$axios.$get(`${state.serverUrl}/product/${payload}`)
             .then(res => {
                 commit('SET_PRODUCT', res.product)
-                console.error(res)
+                console.log(res)
             })
             .catch((err) => {
                 console.error(err)
@@ -108,7 +108,7 @@ const actions = {
     deleteProduct(context,payload){
         this.$axios.$delete(`${context.state.serverUrl}/product/${payload}`)
             .then(res => {
-                console.error(res)
+                console.log(res)
             })
             .catch((err) => {
                 console.error(err)
@@ -118,7 +118,7 @@ const actions = {
     updateProduct(context, {productID, updatedProduct}) {
         return this.$axios.$put(`${context.state.serverUrl}/product/${productID}`,updatedProduct)
             .then(res => {
-                console.error(res)
+                console.log(res)
             })
             .catch((err) => {
                 console.error(err)
