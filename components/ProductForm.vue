@@ -3,6 +3,8 @@
         <b-form-input class="mt-3 mb-3" v-model="item.title" placeholder="Title" />
         <b-form-input class="mt-3 mb-3" v-model="item.price" placeholder="Price" />
         <b-form-input class="mt-3 mb-3" v-model="item.stockNumber" placeholder="Stock Number" />
+        <b-form-input class="mt-3 mb-3" v-model="item.summary" placeholder="Stock Number" />
+        <b-form-tags class="mt-3 mb-3" v-model="item.features" placeholder="Add Decriciption" />
         <b-form-tags class="mt-3 mb-3" v-model="item.description" placeholder="Add Decriciption" />
         <b-form-tags class="mt-3 mb-2" v-model="item.photo" placeholder="Add Photo Link" />
         <b-form-select  class="mt-2 mb-2" value-field="title" text-field="title" v-model="item.mainCategory" :options="categories" />
@@ -29,6 +31,8 @@ export default {
             item: {
                 title:null,
                 price:null,
+                summary: null,
+                features:null,
                 stockNumber:null,
                 description:null,
                 photo:null,

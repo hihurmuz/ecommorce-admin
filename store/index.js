@@ -2,6 +2,8 @@ const state = () => ({
     serverUrl: 'https://ecommerce-server-kappa.vercel.app/api',
     categories: null,
     product: null,
+    productList: []
+    
 })
 
 const getters = {
@@ -18,6 +20,9 @@ const mutations = {
     },
     SET_PRODUCT( state, payload ) {
         state.product = payload
+    },
+    SET_ALL_PRODUCT( state, payload) {
+        state.productList = payload
     }
 }
   
@@ -81,6 +86,17 @@ const actions = {
                     })
                 break;
         }
+    },
+    
+    getProductAll({ state, commit }, page) {
+        return this.$axios.$get(`${state.serverUrl}/product/list?page=${page}`)
+            .then(res => {
+                commit('SET_ALL_PRODUCT', res)
+                console.log(res)
+            })
+            .catch((err) => {
+                console.error(err)
+            })
     },
     
     getProduct({ state, commit },payload) {

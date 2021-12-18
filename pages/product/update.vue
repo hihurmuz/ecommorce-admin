@@ -47,6 +47,12 @@ export default {
             }
         }
     },
+    created() {
+        if(this.product?._id) {
+            this.productID = this.product._id
+            this.item = this.product
+        }
+    },
     computed: {
         ...mapState(['product', 'categories']),
         ...mapGetters(['subcategoryList']),
